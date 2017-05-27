@@ -1,0 +1,10 @@
+[package]
+name = "cheque"
+version = "0.1.0"
+authors = ["neptunepink <purpleposeidon@gmail.com>"]
+
+[lib]
+path = "./lib.rs"
+
+[dependencies]
+num-traits = "0.1.*"
