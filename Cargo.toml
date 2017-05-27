@@ -2,6 +2,10 @@
 name = "cheque"
 version = "0.1.0"
 authors = ["neptunepink <purpleposeidon@gmail.com>"]
+license = "MIT/Apache-2.0"
+description = "macro for easy checked math"
+# There doesn't seem to be any appropriate categories here. https://crates.io/category_slugs
+homepage = "https://github.com/purpleposeidon/cheque"
 
 [lib]
 path = "./lib.rs"
