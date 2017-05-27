@@ -3,39 +3,39 @@
 //! ```
 //! # #[macro_use] extern crate cheque;
 //! # fn main() {
-//! let a = 5u8;
+//! let a = 10u8;
 //! let b = 20u8;
-//! let z = 0u8;
 //! 
-//! checked_wrap![a, b, z];
+//! let_checked![a, b];
 //! 
-//! assert_eq!(*(a + b), Some(25));
-//! assert_eq!(*(b * b), None);
-//! assert_eq!(*(a - b), None);
-//! assert_eq!(*(b / z), None);
-//! assert_eq!(*(a - 20), None);
-//! assert_eq!(*((a - b) + 1), None);
+//! assert_eq!(a + b, 30);
+//! assert_eq!(b * b, None);
+//! assert_eq!(b / 0, None);
+//! assert_eq!(a - 20, None);
+//! assert_eq!((a - b) + 1, None);
 //! # }
 //! ```
 //! 
-//! `checked_wrap!` redeclares each passed in identifier as a checked numeric value.
-//! You can then use `+`, etc. on the wrapped variables, and then deref the result to get an
+//! `let_checked!` redeclares each identifier as a checked numeric value.
+//! You can then use `+`, etc. on the checked variables, and then deref the result to get an
 //! `Option<_>`.
 //! 
-//! You can also use numeric literals/unwrapped values, so long as they are on the right side of
+//! You can also use numeric literals/unchecked values, so long as they are on the right side of
 //! the operation.
 //! 
 //! ```
 //! # #[macro_use] extern crate cheque;
 //! # fn main() {
 //! let c = 20usize;
-//! checked_wrap![c];
+//! let_checked![c];
 //! 
-//! if let Some(_) = *(c - 100) {
-//!     panic!("Ahh!");
+//! if let Some(scary) = *(c - 100) {
+//!     panic!("Ahh! {:?}", scary);
 //! }
 //! # }
 //! ```
+//! 
+//! 
 //! 
 //! If you are doing generic programming, you should add the [checked num_traits] to your
 //! `where` bounds.
@@ -43,11 +43,13 @@
 
 extern crate num_traits;
 
-use num_traits::ops::checked::*;
 use std::ops::*;
+use std::cmp::PartialEq;
+
+use num_traits::ops::checked::*;
 
 #[macro_export]
-macro_rules! checked_wrap {
+macro_rules! let_checked {
     ($($ident:ident),*) => {$(
         let $ident = $crate::Checker(Some($ident));
     )*};
@@ -67,6 +69,22 @@ impl<T> Deref for Checker<T> {
 
 impl<T> DerefMut for Checker<T> {
     fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
+}
+
+impl<T> PartialEq<T> for Checker<T>
+where T: PartialEq<T> + Copy
+{
+    fn eq(&self, other: &T) -> bool {
+        self.0 == Some(*other)
+    }
+}
+
+impl<T> PartialEq<Option<T>> for Checker<T>
+where T: PartialEq<T>
+{
+    fn eq(&self, other: &Option<T>) -> bool {
+        &self.0 == other
+    }
 }
 
 macro_rules! impl_checked {
@@ -108,7 +126,7 @@ mod test {
     #[test]
     fn compiles() {
         let a = 10;
-        checked_wrap![a];
+        let_checked![a];
         a + a;
         a - a;
         a * a;
@@ -117,5 +135,18 @@ mod test {
         a - 1;
         a * 1;
         a / 1;
+    }
+
+    #[test]
+    fn divide_by_zero() {
+        let b = 1u8;
+        let z = 0u8;
+        let_checked![b, z, /* assert compilation w/ comma */ ];
+        assert_eq!(b / z, None);
+    }
+
+    #[test]
+    fn empty_invoke() {
+        let_checked![]; //... how does it disambiguate? o_O
     }
 }
