@@ -1,4 +1,4 @@
-//! Provides a macro allow natural usage of checked math.
+//! Provides a macro make checked math pretty easy.
 //! 
 //! ```
 //! # #[macro_use] extern crate cheque;
