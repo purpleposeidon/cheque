@@ -1,14 +1,16 @@
 [package]
 name = "cheque"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["neptunepink <purpleposeidon@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = "Convenient checked math"
-# There doesn't seem to be any appropriate categories here. https://crates.io/category_slugs
 homepage = "https://github.com/purpleposeidon/cheque"
+keywords = ["math", "checked-arithmetic"]
+
+# There doesn't seem to be any appropriate categories here. https://crates.io/category_slugs
 
 [lib]
 path = "./lib.rs"
 
 [dependencies]
-num-traits = "0.1.*"
+num-traits = "0.2.*"
