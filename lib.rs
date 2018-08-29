@@ -127,14 +127,14 @@ mod test {
     fn compiles() {
         let a = 10;
         let_checked![a];
-        a + a;
-        a - a;
-        a * a;
-        a / a;
-        a + 1;
-        a - 1;
-        a * 1;
-        a / 1;
+        let _ = a + a;
+        let _ = a - a;
+        let _ = a * a;
+        let _ = a / a;
+        let _ = a + 1;
+        let _ = a - 1;
+        let _ = a * 1;
+        let _ = a / 1;
     }
 
     #[test]
